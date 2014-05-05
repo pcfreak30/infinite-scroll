@@ -150,19 +150,27 @@
 			var self = this;
 
             // determine loading.start actions
-            opts.loading.start = opts.loading.start || function() {
-                $(opts.navSelector).hide();
-                opts.loading.msg
-                .appendTo(opts.loading.selector)
-                .show(opts.loading.speed, $.proxy(function() {
-					this.beginAjax(opts);
-				}, self));
+            opts.loading.start = opts.loading.start || function () {
+                $(opts.navSelector)
+                    .hide();
+                $.blockUI({
+                    message: opts.loading.msg,
+                    css: {
+                        width: '10%',
+                        left: '45%'
+                    },
+                    onBlock: $.proxy(function () {
+                        $("#cboxClose")
+                            .remove();
+                        this.beginAjax(opts);
+                    }, self)
+                })
             };
 
             // determine loading.finished actions
-            opts.loading.finished = opts.loading.finished || function() {
+            opts.loading.finished = opts.loading.finished || function () {
                 if (!opts.state.isBeyondMaxPage)
-                    opts.loading.msg.fadeOut(opts.loading.speed);
+                    $.unblockUI();
             };
 
 			// callback loading
